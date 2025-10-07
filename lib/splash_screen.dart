@@ -23,10 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
 
     Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacement(
@@ -52,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo.jpg', height: 150),
+              Image.asset('assets/images/logo baru.png', height: 150),
               const SizedBox(height: 20),
               Text(
                 'Pet Shop',

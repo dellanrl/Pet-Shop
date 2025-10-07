@@ -23,7 +23,10 @@ class _SignInScreenState extends State<SignInScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.blue[200]!, Colors.blue[400]!],
+            colors: [
+              Colors.blue[200]!,
+              const Color.fromARGB(255, 159, 206, 246)!,
+            ],
           ),
         ),
         child: SafeArea(
@@ -33,7 +36,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/images/logo.jpg", height: 120),
+                  Image.asset("assets/images/logo baru.png", height: 120),
                   const SizedBox(height: 20),
                   Text(
                     "Welcome Back!",
@@ -136,7 +139,12 @@ class _SignInScreenState extends State<SignInScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            foregroundColor: Colors.blue[800],
+                            foregroundColor: const Color.fromARGB(
+                              255,
+                              99,
+                              158,
+                              226,
+                            ),
                             minimumSize: const Size(double.infinity, 50),
                             shape: const StadiumBorder(),
                           ),
