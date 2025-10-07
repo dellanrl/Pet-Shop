@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
 import 'model/aksesoris_screen.dart';
 import 'model/food_screen.dart';
@@ -38,33 +40,37 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(
+          'Pet Shop',
+          style: GoogleFonts.lato(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color.fromARGB(255, 173, 216, 230),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
               "Welcome, $email 👋",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: GoogleFonts.lato(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Expanded(
-            child: GridView.builder(
+            child: MasonryGridView.count(
               padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.9,
-              ),
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
                 return GestureDetector(
                   onTap: () {
+                    // Navigasi tetap sama
                     if (item["title"] == "Profile") {
                       Navigator.push(
                         context,
@@ -121,21 +127,24 @@ class HomeScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    elevation: 3,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(item["icon"], size: 40, color: Colors.black54),
-                        const SizedBox(height: 10),
-                        Text(
-                          item["title"],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(item["icon"], size: 48, color: Colors.black54),
+                          const SizedBox(height: 12),
+                          Text(
+                            item["title"],
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.lato(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
