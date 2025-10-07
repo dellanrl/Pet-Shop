@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'login.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,6 +40,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Color.fromARGB(255, 173, 216, 230),
               ),
             ),
+            LoadingAnimationWidget.staggeredDotsWave(
+              color: const Color.fromARGB(255, 74, 187, 232),
+              size: 28,
+            ),
+
             const SizedBox(height: 5),
             const Text(
               'By: Dellaaa', // <-- Tambahkan nama pembuat di sini
@@ -46,12 +52,6 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
                 color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 50),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Color.fromARGB(255, 173, 216, 230),
               ),
             ),
           ],
