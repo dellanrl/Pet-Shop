@@ -112,7 +112,7 @@ class _LayananScreenState extends State<LayananScreen> {
   }
 }
 
-// 🛒 Halaman keranjang (diganti nama biar tidak bentrok)
+
 class LayananCartScreen extends StatelessWidget {
   final List<Layanan> cart;
 
@@ -135,7 +135,7 @@ class LayananCartScreen extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue[100], // biru pastel biar beda sama food
+                    color: Colors.blue[100],
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(

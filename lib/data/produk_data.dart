@@ -86,7 +86,7 @@ List<Produk> produkMakanan = [
   ),
 ];
 
-// ==== DATA PRODUK PERAWATAN ====
+
 List<Produk> produkPerawatan = [
   Produk(
     nama: "Shampoo Hewan",

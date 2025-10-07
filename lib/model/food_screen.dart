@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/data/food.dart';
 import 'package:flutter_application_2/data/food_data.dart';
-import 'package:flutter_application_2/data/cart_data.dart'; // ✅ cukup ini, tidak perlu import keranjang.dart
+import 'package:flutter_application_2/data/cart_data.dart';
 
 class FoodScreen extends StatefulWidget {
   const FoodScreen({super.key});
@@ -25,7 +25,7 @@ class _FoodScreenState extends State<FoodScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.count(
-          crossAxisCount: 3, // 3 kolom
+          crossAxisCount: 3, 
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
           children: [
@@ -115,14 +115,13 @@ class FoodListScreen extends StatefulWidget {
 }
 
 class _FoodListScreenState extends State<FoodListScreen> {
-  final List<Food> cart = []; // keranjang lokal
-
+  final List<Food> cart = []; 
   void addToCart(Food food) {
     setState(() {
       cart.add(food);
     });
 
-    // ✅ masuk ke keranjang global juga
+    
     globalCart.add(
       Keranjang(nama: food.name, harga: food.price, icon: food.icon),
     );
