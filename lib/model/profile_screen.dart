@@ -22,7 +22,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () async {
-              // pindah ke halaman edit
               final updatedUser = await Navigator.push<User>(
                 context,
                 MaterialPageRoute(

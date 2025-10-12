@@ -142,7 +142,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
         duration: const Duration(seconds: 1),
       ),
     );
-    setState(() {}); // update badge
+    setState(() {}); 
   }
 
   @override
@@ -151,11 +151,11 @@ class _FoodListScreenState extends State<FoodListScreen> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          // 🔹 Ikon keranjang global (digeser sedikit ke kiri)
+          
           Padding(
             padding: const EdgeInsets.only(
               right: 16.0,
-            ), // ubah nilai ini jika masih terlalu mepet
+            ),
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -172,8 +172,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
                 ),
                 if (globalCart.isNotEmpty)
                   Positioned(
-                    right:
-                        6, // sebelumnya 8 — sedikit digeser agar lebih proporsional
+                    right: 6, 
                     top: 8,
                     child: Container(
                       padding: const EdgeInsets.all(4),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/data/cart_data.dart'; // gunakan globalCart
+import 'package:flutter_application_2/data/cart_data.dart';
 
 class Aksesoris {
   final String nama;
-  final int harga; // ubah ke int agar cocok dengan cart_data.dart
+  final int harga;
   final IconData icon;
 
   Aksesoris({required this.nama, required this.harga, required this.icon});
@@ -26,7 +26,6 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
   ];
 
   void addToCart(Aksesoris item) {
-    // Cek apakah sudah ada di keranjang
     final existing = globalCart.firstWhere(
       (produk) => produk.nama == item.nama,
       orElse: () => Keranjang(nama: '', harga: 0),
@@ -47,7 +46,7 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
       ),
     );
 
-    setState(() {}); // update badge keranjang
+    setState(() {}); 
   }
 
   @override
@@ -57,11 +56,11 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
         title: const Text("Aksesoris & Peralatan"),
         backgroundColor: const Color.fromARGB(255, 173, 216, 230),
         actions: [
-          // 🔹 Ikon keranjang global (digeser sedikit ke kiri)
+          
           Padding(
             padding: const EdgeInsets.only(
               right: 16.0,
-            ), // ubah angka ini untuk geser lebih jauh
+            ),
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -78,7 +77,7 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
                 ),
                 if (globalCart.isNotEmpty)
                   Positioned(
-                    right: 6, // sebelumnya 8, digeser agar badge proporsional
+                    right: 6, 
                     top: 8,
                     child: Container(
                       padding: const EdgeInsets.all(4),

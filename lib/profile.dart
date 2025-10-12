@@ -14,7 +14,6 @@ class ProfileScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.account_circle, size: 28),
             onPressed: () {
-              // Aksi jika tombol profile diklik (misal tampilkan snackbar)
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Profile icon clicked')),
               );

@@ -8,7 +8,7 @@ import 'model/profile_screen.dart';
 import 'model/produk_screen.dart';
 import 'model/layanan_screen.dart';
 import 'model/keranjang_screen.dart';
-import 'data/cart_data.dart'; // ✅ tambahkan ini untuk akses globalCart
+import 'data/cart_data.dart'; 
 
 class HomeScreen extends StatefulWidget {
   final String email;
@@ -77,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 Baris Welcome + Keranjang
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -94,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    // ✅ Diperbaiki bagian ikon keranjang
                     Padding(
                       padding: const EdgeInsets.only(right: 4.0),
                       child: Stack(
@@ -113,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   builder: (context) => const KeranjangScreen(),
                                 ),
                               );
-                              setState(() {}); // refresh badge saat kembali
+                              setState(() {}); 
                             },
                           ),
                           if (globalCart.isNotEmpty)
@@ -143,7 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              // 🌈 Grid yang lebih menarik
               Expanded(
                 child: MasonryGridView.count(
                   padding: const EdgeInsets.all(16),
@@ -240,8 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-
-          // 🔹 Tombol Logout di pojok kanan bawah
+          
           Positioned(
             bottom: 20,
             right: 20,

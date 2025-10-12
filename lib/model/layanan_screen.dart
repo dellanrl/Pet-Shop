@@ -12,7 +12,6 @@ class LayananScreen extends StatefulWidget {
 
 class _LayananScreenState extends State<LayananScreen> {
   void addToCart(Layanan layanan) {
-    // Cek apakah layanan sudah ada di keranjang global
     final existingItem = globalCart.firstWhere(
       (item) => item.nama == layanan.nama,
       orElse: () =>
@@ -25,7 +24,7 @@ class _LayananScreenState extends State<LayananScreen> {
       globalCart.add(
         Keranjang(
           nama: layanan.nama,
-          harga: layanan.harga.toInt(), // konversi double ke int
+          harga: layanan.harga.toInt(), 
           icon: Icons.miscellaneous_services,
           gambar: layanan.gambar,
         ),
@@ -39,7 +38,7 @@ class _LayananScreenState extends State<LayananScreen> {
       ),
     );
 
-    setState(() {}); // refresh ikon keranjang
+    setState(() {}); 
   }
 
   @override
@@ -49,7 +48,6 @@ class _LayananScreenState extends State<LayananScreen> {
         title: const Text("Layanan"),
         backgroundColor: const Color.fromARGB(255, 131, 201, 237),
         actions: [
-          // 🔹 Ikon keranjang (digeser sedikit ke kiri)
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Stack(
@@ -65,7 +63,7 @@ class _LayananScreenState extends State<LayananScreen> {
                       ),
                     ).then(
                       (_) => setState(() {}),
-                    ); // update badge setelah kembali
+                    ); 
                   },
                 ),
                 if (globalCart.isNotEmpty)

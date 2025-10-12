@@ -3,7 +3,7 @@ import 'package:flutter_application_2/data/cart_data.dart';
 
 class ProdukPerawatan {
   final String nama;
-  final int harga; // ubah ke int supaya cocok dengan cart_data.dart
+  final int harga; 
   final IconData icon;
 
   ProdukPerawatan({
@@ -38,14 +38,13 @@ class _ProdukPerawatanScreenState extends State<ProdukPerawatanScreen> {
   ];
 
   void addToCart(ProdukPerawatan produk) {
-    // cek apakah produk sudah ada di keranjang
     final existing = globalCart.firstWhere(
       (item) => item.nama == produk.nama,
       orElse: () => Keranjang(nama: '', harga: 0),
     );
 
     if (existing.nama.isNotEmpty) {
-      existing.jumlah++; // tambah jumlah jika sudah ada
+      existing.jumlah++; 
     } else {
       globalCart.add(
         Keranjang(nama: produk.nama, harga: produk.harga, icon: produk.icon),
@@ -56,7 +55,7 @@ class _ProdukPerawatanScreenState extends State<ProdukPerawatanScreen> {
       SnackBar(content: Text("${produk.nama} ditambahkan ke keranjang")),
     );
 
-    setState(() {}); // refresh badge jumlah
+    setState(() {}); 
   }
 
   @override
@@ -66,7 +65,6 @@ class _ProdukPerawatanScreenState extends State<ProdukPerawatanScreen> {
         title: const Text("Produk Perawatan"),
         backgroundColor: const Color.fromARGB(255, 227, 130, 242),
         actions: [
-          // 🔹 Tambahkan padding supaya ikon keranjang lebih sejajar
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Stack(
@@ -80,7 +78,7 @@ class _ProdukPerawatanScreenState extends State<ProdukPerawatanScreen> {
                       MaterialPageRoute(
                         builder: (context) => const GlobalCartScreen(),
                       ),
-                    ).then((_) => setState(() {})); // refresh setelah kembali
+                    ).then((_) => setState(() {})); 
                   },
                 ),
                 if (globalCart.isNotEmpty)
@@ -126,7 +124,7 @@ class _ProdukPerawatanScreenState extends State<ProdukPerawatanScreen> {
               ),
               subtitle: Text(
                 "Rp ${item.harga}",
-              ), // tampil harga dengan format Rp
+              ), 
               trailing: ElevatedButton(
                 onPressed: () => addToCart(item),
                 style: ElevatedButton.styleFrom(
