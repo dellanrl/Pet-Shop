@@ -16,12 +16,10 @@ class User {
        _phone = phone,
        _address = address;
 
-
   String get username => _username;
   String get email => _email;
   String get phone => _phone;
   String get address => _address;
-
 
   set username(String newUsername) => _username = newUsername;
   set email(String newEmail) => _email = newEmail;

@@ -8,34 +8,41 @@ import 'model/profile_screen.dart';
 import 'model/produk_screen.dart';
 import 'model/layanan_screen.dart';
 import 'model/keranjang_screen.dart';
+import 'data/cart_data.dart'; // ✅ tambahkan ini untuk akses globalCart
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final String email;
 
   const HomeScreen({super.key, required this.email});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> items = [
-      {"title": "Profile", "icon": Icons.person, "color": Colors.blue[100]},
-      {"title": "Makanan", "icon": Icons.fastfood, "color": Colors.orange[100]},
+      {
+        "title": "Makanan",
+        "icon": Icons.fastfood,
+        "gradient": [Colors.orange.shade300, Colors.deepOrange.shade200],
+      },
       {
         "title": "Aksesoris & Peralatan",
         "icon": Icons.shopping_bag,
-        "color": Colors.green[100],
+        "gradient": [Colors.green.shade300, Colors.teal.shade200],
       },
       {
         "title": "Produk Perawatan",
         "icon": Icons.spa,
-        "color": Colors.purple[100],
+        "gradient": [Colors.purple.shade300, Colors.pink.shade200],
       },
-      {"title": "Layanan", "icon": Icons.pets, "color": Colors.teal[100]},
       {
-        "title": "Keranjang Belanja",
-        "icon": Icons.shopping_cart,
-        "color": Colors.yellow[100],
+        "title": "Layanan",
+        "icon": Icons.pets,
+        "gradient": [Colors.cyan.shade300, Colors.blue.shade200],
       },
-      {"title": "Logout", "icon": Icons.logout, "color": Colors.grey[300]},
     ];
 
     return Scaffold(
@@ -45,110 +52,208 @@ class HomeScreen extends StatelessWidget {
           style: GoogleFonts.lato(fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 173, 216, 230),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        actions: [
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              "Welcome, $email 👋",
-              style: GoogleFonts.lato(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: MasonryGridView.count(
-              padding: const EdgeInsets.all(12),
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final item = items[index];
-                return GestureDetector(
-                  onTap: () {
-                    // Navigasi tetap sama
-                    if (item["title"] == "Profile") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
-                        ),
-                      );
-                    } else if (item["title"] == "Makanan") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FoodScreen(),
-                        ),
-                      );
-                    } else if (item["title"] == "Aksesoris & Peralatan") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AksesorisScreen(),
-                        ),
-                      );
-                    } else if (item["title"] == "Produk Perawatan") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProdukPerawatanScreen(),
-                        ),
-                      );
-                    } else if (item["title"] == "Layanan") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LayananScreen(),
-                        ),
-                      );
-                    } else if (item["title"] == "Keranjang Belanja") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const KeranjangScreen(),
-                        ),
-                      );
-                    } else if (item["title"] == "Logout") {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignInScreen(),
-                        ),
-                      );
-                    }
-                  },
-                  child: Card(
-                    color: item["color"],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(item["icon"], size: 48, color: Colors.black54),
-                          const SizedBox(height: 12),
-                          Text(
-                            item["title"],
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.lato(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileScreen(),
                   ),
                 );
               },
+              child: const CircleAvatar(
+                radius: 20,
+                backgroundImage: AssetImage('assets/images/profile.jpg'),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 🔹 Baris Welcome + Keranjang
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Welcome, ${widget.email} 👋",
+                      style: GoogleFonts.lato(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    // ✅ Diperbaiki bagian ikon keranjang
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.shopping_cart,
+                              size: 30,
+                              color: Colors.black87,
+                            ),
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const KeranjangScreen(),
+                                ),
+                              );
+                              setState(() {}); // refresh badge saat kembali
+                            },
+                          ),
+                          if (globalCart.isNotEmpty)
+                            Positioned(
+                              right: 6,
+                              top: 8,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  globalCart.length.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 🌈 Grid yang lebih menarik
+              Expanded(
+                child: MasonryGridView.count(
+                  padding: const EdgeInsets.all(16),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return GestureDetector(
+                      onTap: () {
+                        if (item["title"] == "Makanan") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const FoodScreen(),
+                            ),
+                          );
+                        } else if (item["title"] == "Aksesoris & Peralatan") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AksesorisScreen(),
+                            ),
+                          );
+                        } else if (item["title"] == "Produk Perawatan") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ProdukPerawatanScreen(),
+                            ),
+                          );
+                        } else if (item["title"] == "Layanan") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LayananScreen(),
+                            ),
+                          );
+                        }
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: item["gradient"],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              offset: const Offset(3, 4),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.3),
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Icon(
+                                  item["icon"],
+                                  size: 42,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                item["title"],
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          // 🔹 Tombol Logout di pojok kanan bawah
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: FloatingActionButton(
+              backgroundColor: Colors.grey[300],
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                );
+              },
+              child: const Icon(Icons.logout, color: Colors.black87),
             ),
           ),
         ],

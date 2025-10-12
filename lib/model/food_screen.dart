@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/data/food.dart';
 import 'package:flutter_application_2/data/food_data.dart';
 import 'package:flutter_application_2/data/cart_data.dart';
+import 'package:flutter_application_2/model/keranjang_screen.dart';
 
 class FoodScreen extends StatefulWidget {
   const FoodScreen({super.key});
@@ -25,7 +26,7 @@ class _FoodScreenState extends State<FoodScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.count(
-          crossAxisCount: 3, 
+          crossAxisCount: 3,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
           children: [
@@ -115,23 +116,33 @@ class FoodListScreen extends StatefulWidget {
 }
 
 class _FoodListScreenState extends State<FoodListScreen> {
-  final List<Food> cart = []; 
   void addToCart(Food food) {
-    setState(() {
-      cart.add(food);
-    });
-
-    
-    globalCart.add(
-      Keranjang(nama: food.name, harga: food.price, icon: food.icon),
+    // cek apakah produk sudah ada di keranjang global
+    final existing = globalCart.firstWhere(
+      (item) => item.nama == food.name,
+      orElse: () => Keranjang(nama: '', harga: 0),
     );
+
+    if (existing.nama.isNotEmpty) {
+      existing.jumlah++;
+    } else {
+      globalCart.add(
+        Keranjang(
+          nama: food.name,
+          harga:
+              int.tryParse(food.price.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0,
+          icon: food.icon,
+        ),
+      );
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("${food.name} ditambahkan ke keranjang"),
+        content: Text("${food.name} ditambahkan ke keranjang 🛒"),
         duration: const Duration(seconds: 1),
       ),
     );
+    setState(() {}); // update badge
   }
 
   @override
@@ -140,37 +151,47 @@ class _FoodListScreenState extends State<FoodListScreen> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartScreen(cart: cart),
-                    ),
-                  );
-                },
-              ),
-              if (cart.isNotEmpty)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      cart.length.toString(),
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
+          // 🔹 Ikon keranjang global (digeser sedikit ke kiri)
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 16.0,
+            ), // ubah nilai ini jika masih terlalu mepet
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const KeranjangScreen(),
+                      ),
+                    ).then((_) => setState(() {}));
+                  },
+                ),
+                if (globalCart.isNotEmpty)
+                  Positioned(
+                    right:
+                        6, // sebelumnya 8 — sedikit digeser agar lebih proporsional
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        globalCart.length.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -232,69 +253,6 @@ class _FoodListScreenState extends State<FoodListScreen> {
           );
         },
       ),
-    );
-  }
-}
-
-class CartScreen extends StatelessWidget {
-  final List<Food> cart;
-
-  const CartScreen({super.key, required this.cart});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Keranjang")),
-      body: cart.isEmpty
-          ? const Center(child: Text("Keranjang kosong"))
-          : ListView.builder(
-              itemCount: cart.length,
-              itemBuilder: (context, index) {
-                final food = cart[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 12,
-                  ),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[100],
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 4,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(food.icon, size: 28, color: Colors.deepOrange),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            food.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            food.price,
-                            style: const TextStyle(
-                              color: Color.fromARGB(136, 5, 5, 5),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
     );
   }
 }

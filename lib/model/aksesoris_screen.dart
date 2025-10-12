@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/data/cart_data.dart'; // ✅ tambah import globalCart
+import 'package:flutter_application_2/data/cart_data.dart'; // gunakan globalCart
 
 class Aksesoris {
   final String nama;
-  final String harga;
+  final int harga; // ubah ke int agar cocok dengan cart_data.dart
   final IconData icon;
 
   Aksesoris({required this.nama, required this.harga, required this.icon});
@@ -18,28 +18,27 @@ class AksesorisScreen extends StatefulWidget {
 
 class _AksesorisScreenState extends State<AksesorisScreen> {
   final List<Aksesoris> aksesoris = [
-    Aksesoris(nama: "Kalung Hewan", harga: "Rp 25.000", icon: Icons.pets),
-    Aksesoris(nama: "Kandang Mini", harga: "Rp 350.000", icon: Icons.home),
-    Aksesoris(
-      nama: "Mainan Bola",
-      harga: "Rp 15.000",
-      icon: Icons.sports_baseball,
-    ),
-    Aksesoris(nama: "Tempat Makan", harga: "Rp 40.000", icon: Icons.fastfood),
-    Aksesoris(nama: "Grooming Kit", harga: "Rp 120.000", icon: Icons.cut),
+    Aksesoris(nama: "Kalung Hewan", harga: 25000, icon: Icons.pets),
+    Aksesoris(nama: "Kandang Mini", harga: 350000, icon: Icons.home),
+    Aksesoris(nama: "Mainan Bola", harga: 15000, icon: Icons.sports_baseball),
+    Aksesoris(nama: "Tempat Makan", harga: 40000, icon: Icons.fastfood),
+    Aksesoris(nama: "Grooming Kit", harga: 120000, icon: Icons.cut),
   ];
 
-  final List<Aksesoris> cart = [];
-
   void addToCart(Aksesoris item) {
-    setState(() {
-      cart.add(item);
-    });
-
-    // ✅ Tambahkan juga ke keranjang global
-    globalCart.add(
-      Keranjang(nama: item.nama, harga: item.harga, icon: item.icon),
+    // Cek apakah sudah ada di keranjang
+    final existing = globalCart.firstWhere(
+      (produk) => produk.nama == item.nama,
+      orElse: () => Keranjang(nama: '', harga: 0),
     );
+
+    if (existing.nama.isNotEmpty) {
+      existing.jumlah++;
+    } else {
+      globalCart.add(
+        Keranjang(nama: item.nama, harga: item.harga, icon: item.icon),
+      );
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -47,6 +46,8 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
         duration: const Duration(seconds: 1),
       ),
     );
+
+    setState(() {}); // update badge keranjang
   }
 
   @override
@@ -56,37 +57,46 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
         title: const Text("Aksesoris & Peralatan"),
         backgroundColor: const Color.fromARGB(255, 173, 216, 230),
         actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartScreen(cart: cart),
-                    ),
-                  );
-                },
-              ),
-              if (cart.isNotEmpty)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      cart.length.toString(),
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
+          // 🔹 Ikon keranjang global (digeser sedikit ke kiri)
+          Padding(
+            padding: const EdgeInsets.only(
+              right: 16.0,
+            ), // ubah angka ini untuk geser lebih jauh
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const GlobalCartScreen(),
+                      ),
+                    );
+                  },
+                ),
+                if (globalCart.isNotEmpty)
+                  Positioned(
+                    right: 6, // sebelumnya 8, digeser agar badge proporsional
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        globalCart.length.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -107,7 +117,7 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
                 item.nama,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(item.harga),
+              subtitle: Text("Rp ${item.harga}"),
               trailing: ElevatedButton(
                 onPressed: () => addToCart(item),
                 style: ElevatedButton.styleFrom(
@@ -127,64 +137,110 @@ class _AksesorisScreenState extends State<AksesorisScreen> {
   }
 }
 
-class CartScreen extends StatelessWidget {
-  final List<Aksesoris> cart;
-
-  const CartScreen({super.key, required this.cart});
+class GlobalCartScreen extends StatelessWidget {
+  const GlobalCartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    int totalHarga = 0;
+    for (var item in globalCart) {
+      totalHarga += item.harga * item.jumlah;
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Keranjang")),
-      body: cart.isEmpty
-          ? const Center(child: Text("Keranjang kosong"))
-          : ListView.builder(
-              itemCount: cart.length,
-              itemBuilder: (context, index) {
-                final item = cart[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 12,
+      appBar: AppBar(
+        title: const Text("Keranjang Saya"),
+        backgroundColor: const Color.fromARGB(255, 173, 216, 230),
+      ),
+      body: globalCart.isEmpty
+          ? const Center(child: Text("Keranjang masih kosong"))
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: globalCart.length,
+                    itemBuilder: (context, index) {
+                      final item = globalCart[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 4,
+                              offset: const Offset(2, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(item.icon, size: 28, color: Colors.teal),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.nama,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Rp ${item.harga}",
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Text(
+                              "x${item.jumlah}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 4,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
-                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.white,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(item.icon, size: 28, color: Colors.teal),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.nama,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            item.harga,
-                            style: const TextStyle(
-                              color: Color.fromARGB(136, 5, 5, 5),
-                            ),
-                          ),
-                        ],
+                      const Text(
+                        "Total:",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "Rp $totalHarga",
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
                       ),
                     ],
                   ),
-                );
-              },
+                ),
+              ],
             ),
     );
   }

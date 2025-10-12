@@ -12,8 +12,8 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
-  String _username = 'dellaaa';
-  String _password = '123';
+  String _username = ' ';
+  String _password = ' ';
 
   @override
   Widget build(BuildContext context) {

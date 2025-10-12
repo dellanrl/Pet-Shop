@@ -7,7 +7,21 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("Profile"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle, size: 28),
+            onPressed: () {
+              // Aksi jika tombol profile diklik (misal tampilkan snackbar)
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Profile icon clicked')),
+              );
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

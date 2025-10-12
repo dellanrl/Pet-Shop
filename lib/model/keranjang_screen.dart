@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/data/keranjang_data.dart';
-import 'package:flutter_application_2/data/keranjang.dart';
+import 'package:flutter_application_2/data/cart_data.dart';
 
 class KeranjangScreen extends StatefulWidget {
   const KeranjangScreen({super.key});
@@ -18,16 +17,24 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
 
   void _tambahQuantity(Keranjang item) {
     setState(() {
-      item.quantity++;
+      item.jumlah++;
     });
   }
 
   void _kurangiQuantity(Keranjang item) {
     setState(() {
-      if (item.quantity > 1) {
-        item.quantity--;
+      if (item.jumlah > 1) {
+        item.jumlah--;
       }
     });
+  }
+
+  int _hitungTotal() {
+    int total = 0;
+    for (var item in globalCart) {
+      total += item.harga * item.jumlah;
+    }
+    return total;
   }
 
   @override
@@ -65,7 +72,7 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(item.harga),
+                              Text("Rp${item.harga}"),
                               const SizedBox(height: 4),
                               Row(
                                 children: [
@@ -77,7 +84,7 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
                                     onPressed: () => _kurangiQuantity(item),
                                   ),
                                   Text(
-                                    "${item.quantity}",
+                                    "${item.jumlah}",
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -102,41 +109,55 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
                     },
                   ),
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange[300],
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
-                if (globalCart.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Keranjang masih kosong")),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CheckoutScreen(),
+          if (globalCart.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    "Total: Rp${_hitungTotal()}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
-                  );
-                }
-              },
-              child: const Text(
-                "Checkout",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange[300],
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (globalCart.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Keranjang masih kosong"),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CheckoutScreen(),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "Checkout",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
         ],
       ),
     );
@@ -145,6 +166,14 @@ class _KeranjangScreenState extends State<KeranjangScreen> {
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
+
+  int _totalCheckout() {
+    int total = 0;
+    for (var item in globalCart) {
+      total += item.harga * item.jumlah;
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +195,7 @@ class CheckoutScreen extends StatelessWidget {
                               ? Image.asset(item.gambar!, width: 40, height: 40)
                               : const Icon(Icons.shopping_bag)),
                     title: Text(item.nama),
-                    subtitle: Text("${item.harga} x${item.quantity}"),
+                    subtitle: Text("Rp${item.harga} x${item.jumlah}"),
                   ),
                 );
               },
@@ -175,29 +204,42 @@ class CheckoutScreen extends StatelessWidget {
           ? null
           : Padding(
               padding: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Total Pembayaran: Rp${_totalCheckout()}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Checkout berhasil!")),
-                  );
-                  globalCart.clear();
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  "Konfirmasi Pembayaran",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white,
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Checkout berhasil!")),
+                      );
+                      globalCart.clear();
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      "Konfirmasi Pembayaran",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
     );
