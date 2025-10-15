@@ -117,7 +117,6 @@ class FoodListScreen extends StatefulWidget {
 
 class _FoodListScreenState extends State<FoodListScreen> {
   void addToCart(Food food) {
-    // cek apakah produk sudah ada di keranjang global
     final existing = globalCart.firstWhere(
       (item) => item.nama == food.name,
       orElse: () => Keranjang(nama: '', harga: 0),
