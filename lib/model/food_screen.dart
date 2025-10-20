@@ -124,7 +124,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
 
     if (existing.nama.isNotEmpty) {
       existing.jumlah++;
-    } else {
+    } else { 
       globalCart.add(
         Keranjang(
           nama: food.name,
